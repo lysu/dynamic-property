@@ -21,7 +21,7 @@ func ExampleDViper_dynamicProperty() {
 
 	client, _ := elastic.NewClient(
 		elastic.SetURL(conf.ESHost()), // use hold value with xx(), just eval it at call time~
-		createHttpClient(conf.SoTimeout),
+		createHttpClient(conf.SoTimeout()),
 	)
 
 	client.Get()
