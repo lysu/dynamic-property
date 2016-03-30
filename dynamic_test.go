@@ -9,7 +9,7 @@ import (
 
 // This example show how to get config value and hold in conf value, and use it.
 // during conf can freely cache or hold a long time, it will always get newest changed value.
-func ExampleDViper_dynamicProperty() {
+func Example_dynamicProperty() {
 
 	conf := struct {
 		ESHost dynamic.DynamicStringSlice
