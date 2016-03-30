@@ -1,3 +1,18 @@
+// Dynamic-Property enhance viper with API return dynamic(or lazy) value.
+//
+// Viper is essentially repository for configurations
+// Get can retrieve any value given the key to use
+// Get has the behavior of returning the value associated with the first
+// place from where it is set. Viper will check in the following order:
+// override, flag, env, config file, key/value store, default
+//
+// It's common for us to use viper with etcd/consul or company's configuration management system.
+// And let properties have ability to modify dynamically during running...
+// Viper's origin API is get a `Value`, it's easy to lead us to save value into field or some cached-like hold
+// which are not easy to modify. So we extend them and return a function/a lazy value/ dynamic value.
+//
+// because Viper do memory cached internal, so there is no performance degrade to use dynamic value
+// Just replace viper.* with dynamic.* and take free to hold return value~
 package dynamic
 
 import (
@@ -5,15 +20,11 @@ import (
 	"time"
 )
 
+// DViper is a wrapper for viper.Viper to support dynamic abilities
 type DViper viper.Viper
 
-// Viper is essentially repository for configurations
-// Get can retrieve any value given the key to use
-// Get has the behavior of returning the value associated with the first
-// place from where it is set. Viper will check in the following order:
-// override, flag, env, config file, key/value store, default
-//
-// Get returns an interface. For a specific value use one of the Get____ methods.
+
+// Get returns an DynamicInterface. For a specific value use one of the Get____ methods.
 func Get(key string) DynamicInterface { return func() interface{} { return viper.Get(key) } }
 func (v *DViper) Get(key string) DynamicInterface {
 	return func() interface{} {
@@ -22,7 +33,7 @@ func (v *DViper) Get(key string) DynamicInterface {
 	}
 }
 
-// Returns the value associated with the key as a string
+// Returns the value associated with the key as a DynamicString
 func GetString(key string) DynamicString { return func() string { return viper.GetString(key) } }
 func (v *DViper) GetString(key string) DynamicString {
 	return func() string {
@@ -31,7 +42,7 @@ func (v *DViper) GetString(key string) DynamicString {
 	}
 }
 
-// Returns the value associated with the key asa boolean
+// Returns the value associated with the key asa DynamicBool
 func GetBool(key string) DynamicBool { return func() bool { return viper.GetBool(key) } }
 func (v *DViper) GetBool(key string) DynamicBool {
 	return func() bool {
@@ -40,7 +51,7 @@ func (v *DViper) GetBool(key string) DynamicBool {
 	}
 }
 
-// Returns the value associated with the key as an integer
+// Returns the value associated with the key as an DynamicInteger
 func GetInt(key string) DynamicInt { return func() int { return viper.GetInt(key) } }
 func (v *DViper) GetInt(key string) DynamicInt {
 	return func() int {
@@ -49,7 +60,7 @@ func (v *DViper) GetInt(key string) DynamicInt {
 	}
 }
 
-// Returns the value associated with the key as a float64
+// Returns the value associated with the key as a DynamicFloat64
 func GetFloat64(key string) DynamicFloat64 { return func() float64 { return viper.GetFloat64(key) } }
 func (v *DViper) GetFloat64(key string) DynamicFloat64 {
 	return func() float64 {
@@ -58,7 +69,7 @@ func (v *DViper) GetFloat64(key string) DynamicFloat64 {
 	}
 }
 
-// Returns the value associated with the key as time
+// Returns the value associated with the key as DynamicTime
 func GetTime(key string) DynamicTime { return func() time.Time { return viper.GetTime(key) } }
 func (v *DViper) GetTime(key string) DynamicTime {
 	return func() time.Time {
@@ -67,7 +78,7 @@ func (v *DViper) GetTime(key string) DynamicTime {
 	}
 }
 
-// Returns the value associated with the key as a duration
+// Returns the value associated with the key as a DynamicDuration
 func GetDuration(key string) DynamicDuration {
 	return func() time.Duration { return viper.GetDuration(key) }
 }
@@ -78,7 +89,7 @@ func (v *DViper) GetDuration(key string) DynamicDuration {
 	}
 }
 
-// Returns the value associated with the key as a slice of strings
+// Returns the value associated with the key as a dynamic slice of strings
 func GetStringSlice(key string) DynamicStringSlice {
 	return func() []string {
 		return viper.GetStringSlice(key)
@@ -91,7 +102,7 @@ func (v *DViper) GetStringSlice(key string) DynamicStringSlice {
 	}
 }
 
-// Returns the value associated with the key as a map of interfaces
+// Returns the value associated with the key as a dynamic map of interfaces
 func GetStringMap(key string) DynamicMap {
 	return func() map[string]interface{} {
 		return viper.GetStringMap(key)
@@ -104,7 +115,7 @@ func (v *DViper) GetStringMap(key string) DynamicMap {
 	}
 }
 
-// Returns the value associated with the key as a map of strings
+// Returns the value associated with the key as a dynamic map of strings
 func GetStringMapString(key string) DynamicStringMap {
 	return func() map[string]string {
 		return viper.GetStringMapString(key)
@@ -117,7 +128,7 @@ func (v *DViper) GetStringMapString(key string) DynamicStringMap {
 	}
 }
 
-// Returns the value associated with the key as a map to a slice of strings.
+// Returns the value associated with the key as a dynamic map to a slice of strings.
 func GetStringMapStringSlice(key string) DynamicMapStringSlice {
 	return func() map[string][]string {
 		return viper.GetStringMapStringSlice(key)
@@ -131,7 +142,7 @@ func (v *DViper) GetStringMapStringSlice(key string) DynamicMapStringSlice {
 }
 
 // Returns the size of the value associated with the given key
-// in bytes.
+// in dynamic bytes.
 func GetSizeInBytes(key string) DynamicBytes {
 	return func() uint {
 		return viper.GetSizeInBytes(key)
