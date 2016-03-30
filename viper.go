@@ -7,13 +7,15 @@
 // override, flag, env, config file, key/value store, default
 // This package is base on viper, so we recommend to read viper document first at https://github.com/spf13/viper
 //
-// It's common for us to use viper with Etec/consul or company's configuration management system.
+// It's common for us to use viper with Etcd/consul or company's configuration management system.
 // And let properties have ability to modify dynamically during running...
 // Viper's origin API is get a `Value`, it's easy to lead us to save value into field or some cached-like hold
 // which are not easy to modify. So we extend them and return a function/a lazy value/ dynamic value.
 //
 // because Viper do memory cached internal, so there is no performance degrade to use dynamic value
 // Just replace viper.* with dynamic.* and take free to hold return value~
+//
+// At last recommend to see this example https://godoc.org/github.com/lysu/dynamic-property#example-DViper--DynamicProperty
 package dynamic
 
 import (
